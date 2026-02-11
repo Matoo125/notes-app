@@ -22,12 +22,10 @@ import {
 import { Edit, Delete, Save, Cancel } from '@mui/icons-material';
 
 function fetchRemoteNotes() {
-  // TODO: Implement API call
   return fetch('https://698ca6e221a248a273623a71.mockapi.io/api/note').then((response) => response.json());
 }
 
 function saveRemoteNote(note) {
-  // TODO: Implement API call
   return fetch('https://698ca6e221a248a273623a71.mockapi.io/api/note', {
     method: 'POST',
     headers: {
@@ -38,7 +36,6 @@ function saveRemoteNote(note) {
 }
 
 function updateRemoteNote(note) {
-  // TODO: Implement API call
   return fetch(`https://698ca6e221a248a273623a71.mockapi.io/api/note/${note.id}`, {
     method: 'PUT',
     headers: {
@@ -160,13 +157,15 @@ function App() {
   }
 
   function handleDelete(noteId) {
-    deleteRemoteNote(noteId)
-      .then(() => {
-        setNotes(notes.filter((n) => n.id !== noteId));
-      })
-      .catch(error => {
-        console.error('Error deleting note:', error);
-      });
+    if (window.confirm('Are you sure you want to delete this note?')) {
+      deleteRemoteNote(noteId)
+        .then(() => {
+          setNotes(notes.filter((n) => n.id !== noteId));
+        })
+        .catch(error => {
+          console.error('Error deleting note:', error);
+        });
+    }
   }
 
   return (
