@@ -56,7 +56,6 @@ function deleteRemoteNote(id) {
 }
 
 
-const categories = ['Personal', 'Work', 'Other'];
 
 const theme = createTheme({
   palette: {
@@ -77,12 +76,13 @@ const theme = createTheme({
 function App() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('Personal');
+  const [category, setCategory] = useState('kangaroo');
   const [notes, setNotes] = useState([]);
   const [editingNote, setEditingNote] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [titleError, setTitleError] = useState('');
   const [descriptionError, setDescriptionError] = useState('');
+  const [categories, setCategories] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Load notes from API on component mount
@@ -90,6 +90,7 @@ function App() {
     fetchRemoteNotes()
       .then(data => {
         setNotes(data);
+        setCategories([...new Set(data.map(note => note.category))]);
         setLoading(false);
       })
       .catch(error => {
@@ -213,8 +214,8 @@ function App() {
                 onChange={(e) => setCategory(e.target.value)}
                 label="Category"
               >
-                {categories.map((cat) => (
-                  <MenuItem key={cat} value={cat}>{cat}</MenuItem>
+                {categories && categories.map((cat) => (
+                  <MenuItem minWidth="200px" key={cat} value={cat}>{cat}</MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -233,7 +234,13 @@ function App() {
               <Button
                 variant="outlined"
                 startIcon={<Cancel />}
-                onClick={() => setEditingNote(null)}
+                onClick={() => {
+                  setEditingNote(null)
+                  setTitle('')
+                  setDescription('')
+                  setCategory('kangaroo')
+                  
+                }}
               >
                 Cancel
               </Button>
@@ -255,7 +262,7 @@ function App() {
             label="Filter by Category"
           >
             <MenuItem value="All">All</MenuItem>
-            {categories.map((cat) => (
+            {categories && categories.map((cat) => (
               <MenuItem key={cat} value={cat}>{cat}</MenuItem>
             ))}
           </Select>
